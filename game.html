@@ -16,9 +16,16 @@
             <div id="timer">Time: 60</div>
             <button id="logout-button">Logout</button>
         </div>
-        <div id="problem"></div>
-        <input type="text" id="answer" placeholder="Your answer">
-        <button id="submit">Submit</button>
+        
+        <div id="problem-area">
+            <div id="problem"></div>
+            <div id="canvas-container" style="display: none;">
+                <canvas id="game-canvas" width="300" height="200"></canvas>
+            </div>
+        </div>
+
+        <div id="answer-choices"></div>
+
     </div>
     <script src="game.js"></script>
 </body>

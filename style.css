@@ -58,30 +58,55 @@ h2 {
     font-size: 1.2em;
 }
 
-#problem {
-    font-size: 4em;
-    font-weight: bold;
+#problem-area {
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 30px;
 }
 
-input {
-    padding: 15px;
-    font-size: 1.2em;
-    width: 200px;
-    text-align: center;
+#problem {
+    font-size: 4em;
+    font-weight: bold;
+}
+
+#canvas-container {
+    border-radius: 8px;
+    background-color: white;
+}
+
+#answer-choices {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.choice-btn {
+    padding: 15px 30px;
+    font-size: 1.5em;
+    cursor: pointer;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    background-color: #f1c40f;
+    color: #333;
+    min-width: 150px;
+    transition: background-color 0.2s;
+}
+
+.choice-btn:hover {
+    background-color: #f39c12;
 }
 
 button {
-    padding: 15px 30px;
-    font-size: 1.2em;
+    padding: 10px 20px;
+    font-size: 1em;
     cursor: pointer;
     border: none;
     border-radius: 5px;
     background-color: #f1c40f;
     color: #333;
-    margin-left: 10px;
 }
 
 #logout-button {
