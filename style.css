@@ -3,7 +3,6 @@ body {
     margin: 0;
     background-color: #f0f0f0;
     color: #333;
-    overflow: hidden; /* This will prevent scrolling */
 }
 
 #welcome-container, #game-container {
@@ -90,9 +89,7 @@ button {
     color: white;
 }
 
-.hidden {
-    display: none;
-}
+
 
 @media (max-width: 600px) {
     h1 {

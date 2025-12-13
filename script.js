@@ -42,8 +42,10 @@ function initialize() {
 }
 
 function showGame() {
-    welcomeContainer.classList.add('hidden');
-    gameContainer.classList.remove('hidden');
+    welcomeContainer.style.display = 'none';
+    gameContainer.style.display = 'flex';
+    gameContainer.scrollIntoView({ behavior: 'smooth' });
+
     playerNameElement.textContent = currentUser;
     resetGame();
     generateProblem();
@@ -51,8 +53,9 @@ function showGame() {
 }
 
 function showWelcome() {
-    gameContainer.classList.add('hidden');
-    welcomeContainer.classList.remove('hidden');
+    gameContainer.style.display = 'none';
+    welcomeContainer.style.display = 'flex';
+
     if (timerInterval) {
         clearInterval(timerInterval);
     }
