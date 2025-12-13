@@ -16,6 +16,14 @@ function displayError(message) {
 }
 
 /**
+ * Checks if a username already exists in a collection (case-insensitive).
+ */
+function hasMatch(collection, candidate) {
+    const normalized = candidate.toLowerCase();
+    return Object.keys(collection).some(key => key.toLowerCase() === normalized);
+}
+
+/**
  * Handles the logic for creating a new user account.
  */
 signupButton.addEventListener('click', () => {
@@ -39,7 +47,7 @@ signupButton.addEventListener('click', () => {
         // 3. Process the validated data
         let data = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null };
 
-        if (data.users[username] || data.archivedUsers[username]) {
+        if (hasMatch(data.users, username) || hasMatch(data.archivedUsers, username)) {
             displayError('Username already exists. Please choose another one.');
             return;
         }

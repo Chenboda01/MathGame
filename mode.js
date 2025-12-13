@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-        if (!localStorage.getItem('math_game_currentUser')) {
+        const storedData = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null };
+        if (!storedData.currentUser || !storedData.users[storedData.currentUser]) {
             window.location.href = 'index.html?t=' + new Date().getTime();
             return;
         }
