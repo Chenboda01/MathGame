@@ -5,6 +5,7 @@ const scoreElement = document.getElementById('score');
 const levelElement = document.getElementById('level');
 const highScoreElement = document.getElementById('high-score'); // New element
 const timerElement = document.getElementById('timer');
+const loadingOverlay = document.getElementById('loading-overlay');
 const problemTextElement = document.getElementById('problem');
 const canvasContainer = document.getElementById('canvas-container');
 const canvas = document.getElementById('game-canvas');
@@ -79,6 +80,7 @@ function initialize() {
         resetGame();
         generateProblem();
         startTimer();
+        loadingOverlay.style.display = 'none';
     } catch (e) {
         alert('A critical error occurred while starting the game: ' + e.message);
         console.error('Game initialization failed:', e);
