@@ -77,7 +77,7 @@ function generateAngleProblem() {
     currentAnswer = angleTypes[Math.floor(Math.random() * angleTypes.length)];
     drawAngle(currentAnswer);
     const choices = angleTypes.map(type => ({ text: type, value: type }));
-    return { problemText: '', choices }; // No text for angle problems
+    return { problemText: '', choices };
 }
 
 // --- MAIN PROBLEM DISPATCHER ---
@@ -96,21 +96,18 @@ function generateProblem() {
     if (problemType.startsWith('number_')) {
         const op = problemType.split('_')[1];
         problemData = generateNumberProblem(op);
-    } else {
-        switch (problemType) {
-            case 'number':
-                 const ops = ['+', '-', '*', '/'];
-                 const randOp = ops[Math.floor(Math.random() * ops.length)];
-                 problemData = generateNumberProblem(randOp);
-                 break;
-            case 'decimal': problemData = generateDecimalProblem(); break;
-            case 'fraction': problemData = generateFractionProblem(); break;
-            case 'angle':
-                problemTextElement.style.display = 'none';
-                canvasContainer.style.display = 'block';
-                problemData = generateAngleProblem();
-                break;
-        }
+    } else if (problemType === 'number') {
+        const ops = ['+', '-', '*', '/'];
+        const randOp = ops[Math.floor(Math.random() * ops.length)];
+        problemData = generateNumberProblem(randOp);
+    } else if (problemType === 'decimal') {
+        problemData = generateDecimalProblem();
+    } else if (problemType === 'fraction') {
+        problemData = generateFractionProblem();
+    } else if (problemType === 'angle') {
+        problemTextElement.style.display = 'none';
+        canvasContainer.style.display = 'block';
+        problemData = generateAngleProblem();
     }
     
     problemTextElement.textContent = problemData.problemText;
