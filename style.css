@@ -6,6 +6,7 @@ body {
 }
 
 #welcome-container, #game-container, #mode-selection-container {
+    position: relative; /* This is the fix */
     display: flex;
     flex-direction: column;
     justify-content: center;
