@@ -3,15 +3,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // First, check if a user is even logged in. If not, back to index.
     if (!localStorage.getItem('math_game_currentUser')) {
-        window.location.href = 'index.html';
+        window.location.href = 'index.html?t=' + new Date().getTime();
         return;
     }
 
     modeButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const selectedMode = button.getAttribute('data-mode');
-            localStorage.setItem('math_game_currentMode', selectedMode);
-            window.location.href = 'game.html?t=' + new Date().getTime();
+            try {
+                const selectedMode = button.getAttribute('data-mode');
+                localStorage.setItem('math_game_currentMode', selectedMode);
+                window.location.href = 'game.html?t=' + new D ate().getTime();
+            } catch (e) {
+                alert('Error: Could not save your selection. Your browser storage may be disabled or full.');
+                console.error('Failed to save mode:', e);
+            }
         });
     });
 });
