@@ -173,9 +173,8 @@ function initialize() {
         generateProblem();
         startTimer();
     } catch (e) {
-        alert('A critical error occurred while starting the game. Please ensure browser storage is enabled and try again.');
+        alert('A critical error occurred while starting the game: ' + e.message);
         console.error('Game initialization failed:', e);
-        window.location.href = 'index.html';
     }
 }
 

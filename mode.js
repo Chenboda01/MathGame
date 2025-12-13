@@ -15,13 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('math_game_currentMode', selectedMode);
                     window.location.href = 'game.html?t=' + new Date().getTime();
                 } catch (e) {
-                    alert('Error: Could not save your selection. Your browser storage may be disabled or full.');
+                    alert('Error saving selection: ' + e.message);
                     console.error('Failed to save mode:', e);
                 }
             });
         });
     } catch (e) {
-        alert('Error loading selection page. Please ensure browser storage is enabled.');
+        alert('Error on mode page: ' + e.message);
         console.error('Mode page loading failed:', e);
     }
 });

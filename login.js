@@ -9,7 +9,7 @@ function initialize() {
             window.location.href = 'mode.html?t=' + new Date().getTime();
         }
     } catch (e) {
-        alert('Error checking your session. Please ensure browser storage is enabled.');
+        alert('Error checking session: ' + e.message);
         console.error('Session check failed:', e);
     }
 }
@@ -30,7 +30,7 @@ loginButton.addEventListener('click', () => {
             alert('Username not found. Please create a new user.');
         }
     } catch (e) {
-        alert('Error during login. Please ensure browser storage is enabled.');
+        alert('Error during login: ' + e.message);
         console.error('Login failed:', e);
     }
 });

@@ -21,7 +21,7 @@ signupButton.addEventListener('click', () => {
         alert('Account created successfully! Please sign in.');
         window.location.href = 'index.html';
     } catch (e) {
-        alert('Error creating account. Please ensure browser storage is enabled.');
+        alert('Error creating account: ' + e.message);
         console.error('Account creation failed:', e);
     }
 });
