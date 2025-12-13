@@ -112,10 +112,41 @@ logoutButton.addEventListener('click', () => {
 
 
 function generateProblem() {
-    const num1 = Math.floor(Math.random() * 10 * level);
-    const num2 = Math.floor(Math.random() * 10 * level);
-    problemElement.textContent = `${num1} + ${num2}`;
-    currentAnswer = num1 + num2;
+    const operations = ['+', '-', '*', '/'];
+    const operation = operations[Math.floor(Math.random() * operations.length)];
+
+    let num1, num2;
+    let problemText;
+    
+    switch (operation) {
+        case '+':
+            num1 = Math.floor(Math.random() * 10 * level);
+            num2 = Math.floor(Math.random() * 10 * level);
+            currentAnswer = num1 + num2;
+            problemText = `${num1} + ${num2}`;
+            break;
+        case '-':
+            num1 = Math.floor(Math.random() * 10 * level);
+            num2 = Math.floor(Math.random() * num1); // Ensure num2 is not larger
+            currentAnswer = num1 - num2;
+            problemText = `${num1} - ${num2}`;
+            break;
+        case '*':
+            num1 = Math.floor(Math.random() * 10 * level);
+            num2 = Math.floor(Math.random() * 10); // Keep multiplier smaller
+            currentAnswer = num1 * num2;
+            problemText = `${num1} × ${num2}`;
+            break;
+        case '/':
+            num2 = Math.floor(Math.random() * 9) + 1; // Avoid division by zero
+            const multiplier = Math.floor(Math.random() * 10 * level);
+            num1 = num2 * multiplier;
+            currentAnswer = num1 / num2;
+            problemText = `${num1} ÷ ${num2}`;
+            break;
+    }
+
+    problemElement.textContent = problemText;
 }
 
 function checkAnswer() {
