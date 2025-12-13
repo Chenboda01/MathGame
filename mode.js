@@ -1,17 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     const modeButtons = document.querySelectorAll('.mode-btn');
     const errorMessageElement = document.getElementById('error-message');
+    const usernameElement = document.getElementById('current-username');
+    const logoutButton = document.getElementById('mode-logout');
 
     function displayError(message) {
         errorMessageElement.textContent = message;
     }
 
+    let storedData = { users: {}, archivedUsers: {}, currentUser: null };
+
     try {
-        const storedData = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null };
-        if (!storedData.currentUser || !storedData.users[storedData.currentUser]) {
+        storedData = JSON.parse(localStorage.getItem('math_game_data')) || storedData;
+        const currentUser = storedData.currentUser;
+        if (!currentUser || !storedData.users[currentUser]) {
             window.location.href = 'index.html?t=' + new Date().getTime();
             return;
         }
+
+        usernameElement.textContent = currentUser;
 
         modeButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -29,4 +36,16 @@ document.addEventListener('DOMContentLoaded', () => {
         displayError('Error on mode page: ' + e.message);
         console.error('Mode page loading failed:', e);
     }
+
+    logoutButton.addEventListener('click', () => {
+        try {
+            storedData.currentUser = null;
+            localStorage.setItem('math_game_data', JSON.stringify(storedData));
+            localStorage.removeItem('math_game_currentMode');
+            window.location.href = 'index.html?t=' + new Date().getTime();
+        } catch (err) {
+            displayError('Unable to log out. Please refresh and try again.');
+            console.error('Mode logout failed:', err);
+        }
+    });
 });

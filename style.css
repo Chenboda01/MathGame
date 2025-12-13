@@ -31,6 +31,33 @@ body {
     color: white;
 }
 
+#mode-header {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+#current-username::before {
+    content: 'Signed in as ';
+    font-weight: 400;
+    text-transform: none;
+}
+
+#mode-logout {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9em;
+}
+
 h1 {
     font-size: 3em;
     margin-bottom: 30px;
