@@ -166,20 +166,31 @@ function drawAngle(angleType) {
 }
 
 function initialize() {
-    currentUser = localStorage.getItem('math_game_currentUser');
-    currentMode = localStorage.getItem('math_game_currentMode');
-    if (!currentUser) { window.location.href = 'index.html'; return; }
-    if (!currentMode) { window.location.href = 'mode.html'; return; }
-    playerNameElement.textContent = currentUser;
-    resetGame();
-    generateProblem();
-    startTimer();
+    try {
+        currentUser = localStorage.getItem('math_game_currentUser');
+        currentMode = localStorage.getItem('math_game_currentMode');
+        if (!currentUser) { window.location.href = 'index.html'; return; }
+        if (!currentMode) { window.location.href = 'mode.html'; return; }
+        playerNameElement.textContent = currentUser;
+        resetGame();
+        generateProblem();
+        startTimer();
+    } catch (e) {
+        alert('A critical error occurred while starting the game. Please ensure browser storage is enabled and try again.');
+        console.error('Game initialization failed:', e);
+        window.location.href = 'index.html';
+    }
 }
 
 logoutButton.addEventListener('click', () => {
-    localStorage.removeItem('math_game_currentUser');
-    localStorage.removeItem('math_game_currentMode');
-    window.location.href = 'index.html?t=' + new Date().getTime();
+    try {
+        localStorage.removeItem('math_game_currentUser');
+        localStorage.removeItem('math_game_currentMode');
+        window.location.href = 'index.html?t=' + new Date().getTime();
+    } catch (e) {
+        alert('Error during logout. Please ensure browser storage is enabled.');
+        console.error('Logout failed:', e);
+    }
 });
 
 initialize();
