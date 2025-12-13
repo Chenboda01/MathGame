@@ -40,8 +40,40 @@ button {
     cursor: pointer;
 }
 
+
+#welcome-container {
+    display: block;
+}
+
+#auth-forms {
+    display: flex;
+    justify-content: space-around;
+    gap: 40px;
+    margin-top: 20px;
+}
+
+#signup-form, #login-form {
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#logout-button {
+    margin-left: 20px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+}
+
+.hidden {
+    display: none;
+}
+
 @media (max-width: 600px) {
     .container {
         width: 90%;
+    }
+    #auth-forms {
+        flex-direction: column;
     }
 }
