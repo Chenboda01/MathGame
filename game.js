@@ -47,7 +47,17 @@ function initGamePage() {
     
     // --- CORE GAME LOGIC & UI ---
     function checkAnswer(selectedAnswer) { if (selectedAnswer == currentAnswer) { score++; updateScore(); if (score > 0 && score % 10 === 0) { level++; levelElement.textContent = `Level: ${level}`; } } generateProblem(); }
-    function displayChoices(choices) { answerChoicesElement.innerHTML = ''; choices.forEach(choice => { const button = document.createElement('button'); button.textContent = choice.text; button.className = 'choice-btn'; button.onclick = () => checkAnswer(choice.value); answerChoicesElement.appendChild(button); }); }
+    function displayChoices(choices) { answerChoicesElement.innerHTML = ''; choices.forEach((choice, index) => { const button = document.createElement('button'); button.className = 'choice-btn'; button.innerHTML = `<span class="choice-key">${index + 1}</span>${choice.text}`; button.dataset.choiceIndex = index; button.onclick = () => checkAnswer(choice.value); answerChoicesElement.appendChild(button); }); }
+
+    function handleKeyboardChoice(event) {
+        const match = /^[1-4]$/.exec(event.key);
+        if (!match) return;
+        const idx = Number(match[0]) - 1;
+        const choiceButton = answerChoicesElement.querySelector(`button[data-choice-index="${idx}"]`);
+        if (choiceButton) {
+            choiceButton.click();
+        }
+    }
     function updateScore() { scoreElement.textContent = `Score: ${score}`; }
     function startTimer() { timerInterval = setInterval(() => { timeLeft--; timerElement.textContent = `Time: ${timeLeft}`; if (timeLeft <= 0) { clearInterval(timerInterval); let message = `Game Over! Your score is ${score}`; const user = data.users[currentUser]; if (score > user.highScore) { user.highScore = score; message = `Game Over! New High Score: ${score}`; try { localStorage.setItem('math_game_data', JSON.stringify(data)); } catch(e) { console.error("Failed to save high score", e); } } problemTextElement.style.display = 'none'; canvasContainer.style.display = 'none'; answerChoicesElement.innerHTML = ''; displayMessage(message); setTimeout(() => { window.location.href = 'index.html'; }, 3000); } }, 1000); }
     function resetGame() { score = 0; level = 1; timeLeft = 60; updateScore(); levelElement.textContent = `Level: ${level}`; if (timerInterval) clearInterval(timerInterval); }
@@ -71,8 +81,9 @@ function initGamePage() {
 
     async function main() { try { if (loadingOverlay) loadingOverlay.style.display = 'flex'; await initializeData(); if (loadingOverlay) loadingOverlay.style.display = 'none'; startTimer(); } catch (e) { if (loadingOverlay) loadingOverlay.style.display = 'none'; displayMessage(`A critical error occurred: ${e.message}`, true); console.error(e); } }
 
-    main();
-}
+        main();
+        document.addEventListener('keydown', handleKeyboardChoice);
+    }
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initGamePage);
