@@ -23,6 +23,7 @@ function initGamePage() {
     let score = 0, level = 1, timeLeft = 60;
     let currentAnswer, timerInterval, currentUser, currentMode;
     let data = {};
+    let isAwaitingNext = false;
 
     // --- HELPER & UI FUNCTIONS ---
     function displayMessage(message, isError = false) {
@@ -33,6 +34,42 @@ function initGamePage() {
     }
 
     const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
+
+    // --- AUDIO FEEDBACK HELPERS ---
+    let audioCtx = null;
+    function playTone(frequency, durationMs, type = 'sine') {
+        try {
+            const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextCtor) {
+                return;
+            }
+            if (!audioCtx) {
+                audioCtx = new AudioContextCtor();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.value = frequency;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            const durationSeconds = durationMs / 1000;
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + durationSeconds);
+            osc.start(now);
+            osc.stop(now + durationSeconds);
+        } catch (e) {
+            console.error('Audio playback failed:', e);
+        }
+    }
+
+    function playCorrectSound() {
+        playTone(880, 180, 'triangle');
+    }
+
+    function playWrongSound() {
+        playTone(220, 220, 'square');
+    }
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
     function drawAngle(angleType) { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = '#333'; ctx.lineWidth = 5; const centerX = canvas.width / 2, centerY = canvas.height - 20, lineLength = 80; let angle; if (angleType === 'Right') angle = Math.PI / 2; else if (angleType === 'Acute') angle = (Math.random() * 60 + 20) * Math.PI / 180; else angle = (Math.random() * 60 + 100) * Math.PI / 180; ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength, centerY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength * Math.cos(angle), centerY - lineLength * Math.sin(angle)); ctx.stroke(); }
     
@@ -46,8 +83,62 @@ function initGamePage() {
     function generateProblem() { displayMessage(''); let problemTypes = []; if (currentMode === 'mix') { problemTypes = ['number', 'fraction', 'decimal', 'angle']; } else if (currentMode.startsWith('number_')) { problemTypes = [currentMode]; } else { problemTypes = [currentMode]; } const problemType = problemTypes[Math.floor(Math.random() * problemTypes.length)]; let problemData; problemTextElement.style.display = 'block'; canvasContainer.style.display = 'none'; if (problemType.startsWith('number_')) { const op = problemType.split('_')[1]; problemData = generateNumberProblem(op); } else if (problemType === 'number') { const ops = ['+', '-', '*', '/']; const randOp = ops[Math.floor(Math.random() * ops.length)]; problemData = generateNumberProblem(randOp); } else if (problemType === 'decimal') { problemData = generateDecimalProblem(); } else if (problemType === 'fraction') { problemData = generateFractionProblem(); } else if (problemType === 'angle') { problemTextElement.style.display = 'none'; canvasContainer.style.display = 'block'; problemData = generateAngleProblem(); } if (!problemData) { throw new Error('Failed to generate problem data for type: ' + problemType); } problemTextElement.textContent = problemData.problemText; displayChoices(shuffle(problemData.choices)); }
     
     // --- CORE GAME LOGIC & UI ---
-    function checkAnswer(selectedAnswer) { if (selectedAnswer == currentAnswer) { score++; updateScore(); if (score > 0 && score % 10 === 0) { level++; levelElement.textContent = `Level: ${level}`; } } generateProblem(); }
-    function displayChoices(choices) { answerChoicesElement.innerHTML = ''; choices.forEach((choice, index) => { const button = document.createElement('button'); button.className = 'choice-btn'; button.innerHTML = `<span class="choice-key">${index + 1}</span>${choice.text}`; button.dataset.choiceIndex = index; button.onclick = () => checkAnswer(choice.value); answerChoicesElement.appendChild(button); }); }
+    function clearChoiceState() {
+        const buttons = answerChoicesElement.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => {
+            btn.disabled = false;
+            btn.classList.remove('choice-correct', 'choice-wrong');
+        });
+    }
+
+    function checkAnswer(selectedAnswer, button) {
+        if (isAwaitingNext) return;
+        isAwaitingNext = true;
+
+        const isCorrect = selectedAnswer == currentAnswer;
+        const buttons = answerChoicesElement.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => { btn.disabled = true; });
+
+        if (isCorrect) {
+            score++;
+            updateScore();
+            if (score > 0 && score % 10 === 0) {
+                level++;
+                levelElement.textContent = `Level: ${level}`;
+            }
+            if (button) {
+                button.classList.add('choice-correct');
+            }
+            playCorrectSound();
+        } else {
+            if (score > 0) {
+                score--;
+                updateScore();
+            }
+            if (button) {
+                button.classList.add('choice-wrong');
+            }
+            playWrongSound();
+        }
+
+        setTimeout(() => {
+            clearChoiceState();
+            isAwaitingNext = false;
+            generateProblem();
+        }, 500);
+    }
+
+    function displayChoices(choices) {
+        answerChoicesElement.innerHTML = '';
+        choices.forEach((choice, index) => {
+            const button = document.createElement('button');
+            button.className = 'choice-btn';
+            button.innerHTML = `<span class="choice-key">${index + 1}</span>${choice.text}`;
+            button.dataset.choiceIndex = index;
+            button.onclick = () => checkAnswer(choice.value, button);
+            answerChoicesElement.appendChild(button);
+        });
+    }
 
     function handleKeyboardChoice(event) {
         const match = /^[1-4]$/.exec(event.key);
