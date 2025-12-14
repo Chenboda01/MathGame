@@ -3,7 +3,7 @@
  * It is loaded by game.html and starts the game after ensuring a user is logged in
  * and has selected a game mode.
  */
-document.addEventListener('DOMContentLoaded', () => {
+function initGamePage() {
     // --- DOM ELEMENT REFERENCES ---
     const playerNameElement = document.getElementById('player-name');
     const logoutButton = document.getElementById('logout-button');
@@ -25,15 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let data = {};
 
     // --- HELPER & UI FUNCTIONS ---
-
-    /**
-     * Displays a message in the message container on the page.
-     * @param {string} message - The message to display.
-     * @param {boolean} isError - If true, styles the message as an error.
-     */
     function displayMessage(message, isError = false) {
-        errorMessageElement.textContent = message;
-        errorMessageElement.style.color = isError ? '#ffcccc' : '#ffffff';
+        if (errorMessageElement) {
+            errorMessageElement.textContent = message;
+            errorMessageElement.style.color = isError ? '#ffcccc' : '#ffffff';
+        }
     }
 
     const gcd = (a, b) => b === 0 ? a : gcd(b, a % b);
@@ -56,15 +52,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() { timerInterval = setInterval(() => { timeLeft--; timerElement.textContent = `Time: ${timeLeft}`; if (timeLeft <= 0) { clearInterval(timerInterval); let message = `Game Over! Your score is ${score}`; const user = data.users[currentUser]; if (score > user.highScore) { user.highScore = score; message = `Game Over! New High Score: ${score}`; try { localStorage.setItem('math_game_data', JSON.stringify(data)); } catch(e) { console.error("Failed to save high score", e); } } problemTextElement.style.display = 'none'; canvasContainer.style.display = 'none'; answerChoicesElement.innerHTML = ''; displayMessage(message); setTimeout(() => { window.location.href = 'index.html'; }, 3000); } }, 1000); }
     function resetGame() { score = 0; level = 1; timeLeft = 60; updateScore(); levelElement.textContent = `Level: ${level}`; if (timerInterval) clearInterval(timerInterval); }
     
-    logoutButton.addEventListener('click', () => { try { data.currentUser = null; localStorage.setItem('math_game_data', JSON.stringify(data)); localStorage.removeItem('math_game_currentMode'); window.location.href = 'index.html?t=' + new Date().getTime(); } catch (e) { displayMessage('Error during logout.', true); console.error('Logout failed:', e); } });
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            try {
+                data.currentUser = null;
+                localStorage.setItem('math_game_data', JSON.stringify(data));
+                localStorage.removeItem('math_game_currentMode');
+                window.location.href = 'index.html?t=' + new Date().getTime();
+            } catch (e) {
+                displayMessage('Error during logout.', true);
+                console.error('Logout failed:', e);
+            }
+        });
+    }
 
     // --- ASYNCHRONOUS INITIALIZATION ---
     function initializeData() { return new Promise((resolve, reject) => { try { data = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null }; currentUser = data.currentUser; currentMode = localStorage.getItem('math_game_currentMode'); if (!currentUser || !data.users[currentUser]) { return reject(new Error("No valid user session. Redirecting to login.")); } if (!currentMode) { window.location.href = 'mode.html'; return reject(new Error("No game mode selected.")); } const user = data.users[currentUser]; playerNameElement.textContent = currentUser; highScoreElement.textContent = `High Score: ${user.highScore}`; resetGame(); generateProblem(); setTimeout(() => resolve(), 500); } catch (e) { reject(e); } }); }
 
-    /**
-     * Main entry point for the application. Controls the loading sequence.
-     */
-    async function main() { try { loadingOverlay.style.display = 'flex'; await initializeData(); loadingOverlay.style.display = 'none'; startTimer(); } catch (e) { loadingOverlay.style.display = 'none'; displayMessage(`A critical error occurred: ${e.message}`, true); console.error(e); } }
+    async function main() { try { if (loadingOverlay) loadingOverlay.style.display = 'flex'; await initializeData(); if (loadingOverlay) loadingOverlay.style.display = 'none'; startTimer(); } catch (e) { if (loadingOverlay) loadingOverlay.style.display = 'none'; displayMessage(`A critical error occurred: ${e.message}`, true); console.error(e); } }
 
     main();
-});
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGamePage);
+} else {
+    initGamePage();
+}
