@@ -163,22 +163,29 @@ h2 {
     border-radius: 8px;
     background-color: #f1c40f;
     color: #333;
-    min-width: 150px;
+    min-width: 160px;
     transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .choice-btn:hover {
     background-color: #f39c12;
 }
 
+.choice-btn .choice-key {
+    margin-right: 12px;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    font-size: 0.9em;
+    letter-spacing: 0.1em;
+}
+
 .choice-key {
-    display: inline-block;
-    width: 32px;
-    margin-right: 6px;
-    padding-right: 4px;
     text-transform: uppercase;
     font-weight: 600;
-    border-right: 1px solid rgba(51, 51, 51, 0.4);
 }
 
 button {
