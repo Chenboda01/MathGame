@@ -1,5 +1,6 @@
 function initModePage() {
     const subjectButtons = document.querySelectorAll('.subject-btn');
+    const subjectChoices = document.getElementById('subject-choices');
     const mathModeChoices = document.getElementById('math-mode-choices');
     const modeButtons = document.querySelectorAll('.mode-btn');
     const errorMessageElement = document.getElementById('error-message');
@@ -30,6 +31,7 @@ function initModePage() {
             button.addEventListener('click', () => {
                 const selectedSubject = button.getAttribute('data-subject');
                 if (selectedSubject === 'math') {
+                    subjectChoices.style.display = 'none';
                     mathModeChoices.style.display = 'block';
                 } else if (selectedSubject === 'reading') {
                     window.location.href = 'reading_mode.html?t=' + new Date().getTime();
