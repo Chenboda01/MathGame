@@ -6,4 +6,5 @@ This is a Math Game build to play in Web browsers.
 4. Track your progress with scores and levels.
 5. Fun graphics and sound effects to keep you engaged.
 6. Responsive design for play on both desktop and mobile devices.
- 
+
+To play the game, simply open the `index.html` file in your web browser. Enjoy learning math while having fun!
