@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math & Reading Game - Select Reading Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="mode-selection-container">
+        <header id="mode-header">
+            <span id="current-username">SIGNED IN AS</span> <br>
+            <button id="mode-logout" type="button">Log Out</button>
+        </header>
+        <h1>Choose Your Reading Challenge</h1>
+        <div id="error-message" class="error-message"></div>
+        <div id="reading-mode-choices">
+            <button class="mode-btn" data-mode="vocabulary">Vocabulary</button>
+            <button class="mode-btn" data-mode="comprehension">Comprehension</button>
+            <button class="mode-btn" data-mode="grammar">Grammar</button>
+            <button class="mode-btn" data-mode="spelling">Spelling</button>
+        </div>
+    </div>
+    <script>
+        // More robust cache-busting to ensure the latest script is always loaded.
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'reading_mode.js?t=' + new Date().getTime();
+            document.head.appendChild(script);
+        })();
+    </script>
+</body>
+</html>

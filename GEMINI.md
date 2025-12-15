@@ -1,10 +1,11 @@
 ## Project Overview
 
-This project is a web-based math game designed for 4th and 5th-grade students. It aims to make learning math fun and engaging through a series of timed challenges.
+This project is a web-based math and reading game designed for 4th and 5th-grade students. It aims to make learning math and reading fun and engaging through a series of timed challenges.
 
 **Key Features:**
 
-*   Practice problems for addition, subtraction, multiplication, division, fractions, decimals, and angles.
+*   **Math:** Practice problems for addition, subtraction, multiplication, division, fractions, decimals, and angles.
+*   **Reading:** Practice vocabulary, comprehension, grammar, and spelling.
 *   Timed challenges to improve speed and accuracy.
 *   Score and level tracking to monitor progress.
 *   Fun graphics and sound effects.

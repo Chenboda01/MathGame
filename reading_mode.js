@@ -1,6 +1,4 @@
-function initModePage() {
-    const subjectButtons = document.querySelectorAll('.subject-btn');
-    const mathModeChoices = document.getElementById('math-mode-choices');
+function initReadingModePage() {
     const modeButtons = document.querySelectorAll('.mode-btn');
     const errorMessageElement = document.getElementById('error-message');
     const usernameElement = document.getElementById('current-username');
@@ -26,23 +24,13 @@ function initModePage() {
             usernameElement.innerHTML = `SIGNED IN AS <span class="username">${currentUser}</span>`;
         }
 
-        subjectButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const selectedSubject = button.getAttribute('data-subject');
-                if (selectedSubject === 'math') {
-                    mathModeChoices.style.display = 'block';
-                } else if (selectedSubject === 'reading') {
-                    window.location.href = 'reading_mode.html?t=' + new Date().getTime();
-                }
-            });
-        });
-
         modeButtons.forEach(button => {
             button.addEventListener('click', () => {
                 try {
                     const selectedMode = button.getAttribute('data-mode');
                     localStorage.setItem('math_game_currentMode', selectedMode);
-                    window.location.href = 'game.html?t=' + new Date().getTime();
+                    // TODO: Redirect to a generic game.html or a specific reading_game.html
+                    window.location.href = 'game.html?t=' + new Date().getTime(); // For now, redirect to game.html
                 } catch (e) {
                     displayError('Could not save your selection. Storage may be disabled.');
                     console.error('Failed to save mode:', e);
@@ -50,8 +38,8 @@ function initModePage() {
             });
         });
     } catch (e) {
-        displayError('Error on mode page: ' + e.message);
-        console.error('Mode page loading failed:', e);
+        displayError('Error on reading mode page: ' + e.message);
+        console.error('Reading mode page loading failed:', e);
     }
 
     function handleLogout() {
@@ -63,7 +51,7 @@ function initModePage() {
             window.location.href = 'index.html?t=' + new Date().getTime();
         } catch (err) {
             displayError('Unable to log out. Please refresh and try again.');
-            console.error('Mode logout failed:', err);
+            console.error('Reading mode logout failed:', err);
         }
     }
 
@@ -73,7 +61,7 @@ function initModePage() {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initModePage);
+    document.addEventListener('DOMContentLoaded', initReadingModePage);
 } else {
-    initModePage();
+    initReadingModePage();
 }

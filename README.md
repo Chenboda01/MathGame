@@ -1,7 +1,14 @@
-This is a Math Game build to play in Web browsers.
+This is a math and reading game build to play in Web browsers. This improves the math and reading skills of 4th and 5th graders through fun and interactive challenges.
 
-1. For 4th and 5th graders.
+1. For math this is for 4th and 5th graders.
 2. Practice addition, subtraction, multiplication, division, fractions, decimals, and angles.
+3. Timed challenges to improve speed and accuracy.
+4. Track your progress with scores and levels.
+5. Fun graphics and sound effects to keep you engaged.
+6. Responsive design for play on both desktop and mobile devices.
+
+1. For reading this is for 4th and 5th graders.
+2. Practice vocabulary, comprehension, grammar, and spelling.
 3. Timed challenges to improve speed and accuracy.
 4. Track your progress with scores and levels.
 5. Fun graphics and sound effects to keep you engaged.

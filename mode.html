@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Game - Select Mode</title>
+    <title>Math & Reading Game - Select Subject</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,9 +12,14 @@
             <span id="current-username">SIGNED IN AS</span> <br>
             <button id="mode-logout" type="button">Log Out</button>
         </header>
-        <h1>Choose Your Challenge</h1>
+        <h1>Choose Your Subject</h1>
         <div id="error-message" class="error-message"></div>
-        <div id="mode-choices">
+        <div id="subject-choices">
+            <button class="subject-btn" data-subject="math">Math</button>
+            <button class="subject-btn" data-subject="reading">Reading</button>
+        </div>
+        <div id="math-mode-choices" style="display: none;">
+            <h2>Choose Your Math Challenge</h2>
             <button class="mode-btn" data-mode="mix">All Mixed</button>
             <button class="mode-btn" data-mode="number_+">Addition</button>
             <button class="mode-btn" data-mode="number_-">Subtraction</button>
