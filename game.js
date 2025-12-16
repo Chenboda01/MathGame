@@ -72,15 +72,147 @@ function initGamePage() {
     }
     function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
     function drawAngle(angleType) { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = '#333'; ctx.lineWidth = 5; const centerX = canvas.width / 2, centerY = canvas.height - 20, lineLength = 80; let angle; if (angleType === 'Right') angle = Math.PI / 2; else if (angleType === 'Acute') angle = (Math.random() * 60 + 20) * Math.PI / 180; else angle = (Math.random() * 60 + 100) * Math.PI / 180; ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength, centerY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(centerX, centerY); ctx.lineTo(centerX + lineLength * Math.cos(angle), centerY - lineLength * Math.sin(angle)); ctx.stroke(); }
+    const readingQuestionBanks = {
+        grammar: [
+            {
+                prompt: 'Which sentence uses a consistent verb tense?',
+                answer: 'He plays soccer and swims every weekend.',
+                choices: [
+                    'She walks to school and visited the library.',
+                    'He plays soccer and swims every weekend.',
+                    'They were going to the store and buy groceries.'
+                ]
+            },
+            {
+                prompt: 'Select the sentence with the correct possessive form.',
+                answer: "The artist's brushstrokes were bold.",
+                choices: [
+                    'The artists brushstrokes were bold.',
+                    "The artist's brushstrokes were bold.",
+                    'The artist brushstrokes were bold.'
+                ]
+            },
+            {
+                prompt: 'Choose the sentence that correctly uses a helping verb.',
+                answer: 'Maya has finished her homework already.',
+                choices: [
+                    'Maya have finished her homework already.',
+                    'Maya had finished her homework already.',
+                    'Maya has finished her homework already.'
+                ]
+            }
+        ],
+        vocabulary: [
+            {
+                prompt: 'Which word best matches the definition "a strong feeling of happiness or joy"?',
+                answer: 'elation',
+                choices: ['elation', 'dread', 'cautious']
+            },
+            {
+                prompt: 'Choose the word that means "to give in or accept something reluctantly".',
+                answer: 'succumb',
+                choices: ['concede', 'succumb', 'ponder']
+            },
+            {
+                prompt: 'What word describes a short and amusing story?',
+                answer: 'anecdote',
+                choices: ['anecdote', 'lecture', 'formula']
+            }
+        ],
+        comprehension: [
+            {
+                prompt: 'Read: "The boy planted seeds in the spring. By summer the garden bloomed." What happened after spring?',
+                answer: 'The garden bloomed.',
+                choices: ['The garden bloomed.', 'The boy left for vacation.', 'He planted new trees.']
+            },
+            {
+                prompt: 'Read: "Lina saved her allowance for weeks before the fair." What did Lina do before the fair?',
+                answer: 'Saved her allowance.',
+                choices: ['Held a race.', 'Saved her allowance.', 'Visited the library.']
+            },
+            {
+                prompt: 'Read: "The puppy barked when the mail carrier arrived." What caused the puppy to bark?',
+                answer: 'The mail carrier arrived.',
+                choices: ['Someone knocked loudly.', 'The mail carrier arrived.', 'He heard thunder.']
+            }
+        ],
+        spelling: [
+            {
+                prompt: 'Choose the correctly spelled word.',
+                answer: 'accommodate',
+                choices: ['acommodate', 'accommodate', 'acomodate']
+            },
+            {
+                prompt: 'Which option is spelled correctly?',
+                answer: 'rhythm',
+                choices: ['rythm', 'rhythm', 'rythym']
+            },
+            {
+                prompt: 'Select the right spelling for the word meaning "carefully done".',
+                answer: 'meticulous',
+                choices: ['meticulous', 'meticulus', 'meticulousy']
+            }
+        ]
+    };
     
     // --- PROBLEM GENERATION HELPERS ---
     function generateNumberProblem(op) { let num1, num2; if (op === '+') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*10*level); currentAnswer = num1 + num2; } else if (op === '-') { num1 = Math.floor(Math.random()*10*level); num2 = Math.floor(Math.random()*num1); currentAnswer = num1 - num2; } else if (op === '*') { num1 = Math.floor(Math.random()*10); num2 = Math.floor(Math.random()*10); currentAnswer = num1 * num2; } else if (op === '/') { num2 = Math.floor(Math.random()*9)+1; num1 = num2*(Math.floor(Math.random()*10)); currentAnswer = num1 / num2; } const problemText = `${num1} ${op.replace('*','×').replace('/','÷')} ${num2}`; const choices = [ { text: currentAnswer, value: currentAnswer }, { text: currentAnswer + (Math.floor(Math.random()*3)+1), value: currentAnswer + (Math.floor(Math.random()*3)+1) }, { text: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)), value: Math.max(0, currentAnswer - (Math.floor(Math.random()*3)+1)) } ]; return { problemText, choices }; }
     function generateDecimalProblem() { const num1 = parseFloat((Math.random() * 10).toFixed(1)); const num2 = parseFloat((Math.random() * 10).toFixed(1)); currentAnswer = parseFloat((num1 + num2).toFixed(1)); const problemText = `${num1} + ${num2}`; const choices = [ { text: currentAnswer, value: currentAnswer }, { text: parseFloat((currentAnswer + 1).toFixed(1)), value: parseFloat((currentAnswer + 1).toFixed(1)) }, { text: parseFloat(Math.max(0, currentAnswer - 1).toFixed(1)), value: parseFloat(Math.max(0, currentAnswer - 1).toFixed(1)) } ]; return { problemText, choices }; }
     function generateFractionProblem() { const den1 = Math.floor(Math.random() * 5) + 2; const den2 = Math.floor(Math.random() * 5) + 2; const num1 = Math.floor(Math.random() * den1) + 1; const num2 = Math.floor(Math.random() * den2) + 1; const problemText = `${num1}/${den1} + ${num2}/${den2}`; const ansNum = num1 * den2 + num2 * den1; const ansDen = den1 * den2; const common = gcd(ansNum, ansDen); currentAnswer = `${ansNum/common}/${ansDen/common}`; const choices = [ { text: currentAnswer, value: currentAnswer }, { text: `${ansNum/common + 1}/${ansDen/common}`, value: `${ansNum/common + 1}/${ansDen/common}` }, { text: `${ansNum/common}/${ansDen/common + 1}`, value: `${ansNum/common}/${ansDen/common + 1}` } ]; return { problemText, choices }; }
     function generateAngleProblem() { const angleTypes = ['Acute', 'Obtuse', 'Right']; currentAnswer = angleTypes[Math.floor(Math.random() * angleTypes.length)]; drawAngle(currentAnswer); const choices = angleTypes.map(type => ({ text: type, value: type })); return { problemText: '', choices }; }
+    function generateReadingProblem(type) {
+        const bank = readingQuestionBanks[type];
+        if (!bank || !bank.length) {
+            return null;
+        }
+        const selection = bank[Math.floor(Math.random() * bank.length)];
+        currentAnswer = selection.answer;
+        const choices = selection.choices.map(choice => ({ text: choice, value: choice }));
+        return {
+            problemText: selection.prompt,
+            choices
+        };
+    }
 
     // --- MAIN PROBLEM DISPATCHER ---
-    function generateProblem() { displayMessage(''); let problemTypes = []; if (currentMode === 'mix') { problemTypes = ['number', 'fraction', 'decimal', 'angle']; } else if (currentMode.startsWith('number_')) { problemTypes = [currentMode]; } else { problemTypes = [currentMode]; } const problemType = problemTypes[Math.floor(Math.random() * problemTypes.length)]; let problemData; problemTextElement.style.display = 'block'; canvasContainer.style.display = 'none'; if (problemType.startsWith('number_')) { const op = problemType.split('_')[1]; problemData = generateNumberProblem(op); } else if (problemType === 'number') { const ops = ['+', '-', '*', '/']; const randOp = ops[Math.floor(Math.random() * ops.length)]; problemData = generateNumberProblem(randOp); } else if (problemType === 'decimal') { problemData = generateDecimalProblem(); } else if (problemType === 'fraction') { problemData = generateFractionProblem(); } else if (problemType === 'angle') { problemTextElement.style.display = 'none'; canvasContainer.style.display = 'block'; problemData = generateAngleProblem(); } if (!problemData) { throw new Error('Failed to generate problem data for type: ' + problemType); } problemTextElement.textContent = problemData.problemText; displayChoices(shuffle(problemData.choices)); }
+    function generateProblem() {
+        displayMessage('');
+        let problemTypes = [];
+        if (currentMode === 'mix') {
+            problemTypes = ['number', 'fraction', 'decimal', 'angle'];
+        } else if (currentMode.startsWith('number_')) {
+            problemTypes = [currentMode];
+        } else {
+            problemTypes = [currentMode];
+        }
+        const problemType = problemTypes[Math.floor(Math.random() * problemTypes.length)];
+        let problemData;
+        problemTextElement.style.display = 'block';
+        canvasContainer.style.display = 'none';
+        if (problemType.startsWith('number_')) {
+            const op = problemType.split('_')[1];
+            problemData = generateNumberProblem(op);
+        } else if (problemType === 'number') {
+            const ops = ['+', '-', '*', '/'];
+            const randOp = ops[Math.floor(Math.random() * ops.length)];
+            problemData = generateNumberProblem(randOp);
+        } else if (problemType === 'decimal') {
+            problemData = generateDecimalProblem();
+        } else if (problemType === 'fraction') {
+            problemData = generateFractionProblem();
+        } else if (problemType === 'angle') {
+            problemTextElement.style.display = 'none';
+            canvasContainer.style.display = 'block';
+            problemData = generateAngleProblem();
+        } else if (['grammar', 'vocabulary', 'comprehension', 'spelling'].includes(problemType)) {
+            problemData = generateReadingProblem(problemType);
+        }
+        if (!problemData) {
+            throw new Error('Failed to generate problem data for type: ' + problemType);
+        }
+        problemTextElement.textContent = problemData.problemText;
+        displayChoices(shuffle(problemData.choices));
+    }
     
     // --- CORE GAME LOGIC & UI ---
     function clearChoiceState() {
