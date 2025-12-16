@@ -91,4 +91,13 @@ loginButton.addEventListener('click', () => {
     }
 });
 
+if (loginUsernameInput) {
+    loginUsernameInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            loginButton.click();
+        }
+    });
+}
+
 initialize();
