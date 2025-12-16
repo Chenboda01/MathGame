@@ -24,6 +24,11 @@ function initGamePage() {
     let currentAnswer, timerInterval, currentUser, currentMode;
     let data = {};
     let isAwaitingNext = false;
+    let totalProblems = 0;
+    let correctAnswers = 0;
+    let startTime = null;
+    let speedElement = document.getElementById('speed');
+    let accuracyElement = document.getElementById('accuracy');
 
     // --- HELPER & UI FUNCTIONS ---
     function displayMessage(message, isError = false) {
@@ -233,6 +238,7 @@ function initGamePage() {
 
         if (isCorrect) {
             score++;
+            correctAnswers++; // Increment correct answers
             updateScore();
             if (score > 0 && score % 10 === 0) {
                 level++;
@@ -252,6 +258,9 @@ function initGamePage() {
             }
             playWrongSound();
         }
+
+        // Update speed and accuracy after each answer
+        updateSpeedAndAccuracy();
 
         setTimeout(() => {
             clearChoiceState();
@@ -281,9 +290,68 @@ function initGamePage() {
             choiceButton.click();
         }
     }
+    function updateSpeedAndAccuracy() {
+        totalProblems++;
+        const currentTime = Date.now();
+        const elapsedTime = (currentTime - startTime) / 1000; // in seconds
+
+        // Calculate speed (problems per second)
+        const speed = elapsedTime > 0 ? (totalProblems / elapsedTime).toFixed(2) : 0;
+        if (speedElement) {
+            speedElement.textContent = `Speed: ${speed} problems/sec`;
+        }
+
+        // Calculate accuracy percentage
+        const accuracy = totalProblems > 0 ? Math.round((correctAnswers / totalProblems) * 100) : 0;
+        if (accuracyElement) {
+            accuracyElement.textContent = `Accuracy: ${accuracy}%`;
+        }
+    }
+
     function updateScore() { scoreElement.textContent = `Score: ${score}`; }
-    function startTimer() { timerInterval = setInterval(() => { timeLeft--; timerElement.textContent = `Time: ${timeLeft}`; if (timeLeft <= 0) { clearInterval(timerInterval); let message = `Game Over! Your score is ${score}`; const user = data.users[currentUser]; if (score > user.highScore) { user.highScore = score; message = `Game Over! New High Score: ${score}`; try { localStorage.setItem('math_game_data', JSON.stringify(data)); } catch(e) { console.error("Failed to save high score", e); } } problemTextElement.style.display = 'none'; canvasContainer.style.display = 'none'; answerChoicesElement.innerHTML = ''; displayMessage(message); setTimeout(() => { window.location.href = 'index.html'; }, 3000); } }, 1000); }
-    function resetGame() { score = 0; level = 1; timeLeft = 60; updateScore(); levelElement.textContent = `Level: ${level}`; if (timerInterval) clearInterval(timerInterval); }
+
+    function startTimer() {
+        startTime = Date.now(); // Record start time when timer begins
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = `Time: ${timeLeft}`;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                let message = `Game Over! Your score is ${score}`;
+                const user = data.users[currentUser];
+                if (score > user.highScore) {
+                    user.highScore = score;
+                    message = `Game Over! New High Score: ${score}`;
+                    try { localStorage.setItem('math_game_data', JSON.stringify(data)); }
+                    catch(e) { console.error("Failed to save high score", e); }
+                }
+
+                // Show final stats
+                if (speedElement) speedElement.textContent = `Final Speed: ${(totalProblems / 60).toFixed(2)} problems/sec`;
+                if (accuracyElement) accuracyElement.textContent = `Final Accuracy: ${totalProblems > 0 ? Math.round((correctAnswers / totalProblems) * 100) : 0}%`;
+
+                problemTextElement.style.display = 'none';
+                canvasContainer.style.display = 'none';
+                answerChoicesElement.innerHTML = '';
+                displayMessage(message);
+                setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+            }
+        }, 1000);
+    }
+
+    function resetGame() {
+        score = 0;
+        level = 1;
+        timeLeft = 60;
+        totalProblems = 0;
+        correctAnswers = 0;
+        startTime = null;
+        updateScore();
+        levelElement.textContent = `Level: ${level}`;
+        if (speedElement) speedElement.textContent = `Speed: 0.00 problems/sec`;
+        if (accuracyElement) accuracyElement.textContent = `Accuracy: 0%`;
+        if (timerInterval) clearInterval(timerInterval);
+    }
     
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
@@ -300,7 +368,7 @@ function initGamePage() {
     }
 
     // --- ASYNCHRONOUS INITIALIZATION ---
-    function initializeData() { return new Promise((resolve, reject) => { try { data = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null }; currentUser = data.currentUser; currentMode = localStorage.getItem('math_game_currentMode'); if (!currentUser || !data.users[currentUser]) { return reject(new Error("No valid user session. Redirecting to login.")); } if (!currentMode) { window.location.href = 'mode.html'; return reject(new Error("No game mode selected.")); } const user = data.users[currentUser]; playerNameElement.textContent = currentUser; highScoreElement.textContent = `High Score: ${user.highScore}`; resetGame(); generateProblem(); setTimeout(() => resolve(), 500); } catch (e) { reject(e); } }); }
+    function initializeData() { return new Promise((resolve, reject) => { try { data = JSON.parse(localStorage.getItem('math_game_data')) || { users: {}, archivedUsers: {}, currentUser: null }; currentUser = data.currentUser; currentMode = localStorage.getItem('math_game_currentMode'); if (!currentUser || !data.users[currentUser]) { return reject(new Error("No valid user session. Redirecting to login.")); } if (!currentMode) { window.location.href = 'mode.html'; return reject(new Error("No game mode selected.")); } const user = data.users[currentUser]; playerNameElement.textContent = currentUser; highScoreElement.textContent = `High Score: ${user.highScore}`; resetGame(); // Initialize the game stats startTime = Date.now(); // Start time when game begins generateProblem(); setTimeout(() => resolve(), 500); } catch (e) { reject(e); } }); }
 
     async function main() { try { if (loadingOverlay) loadingOverlay.style.display = 'flex'; await initializeData(); if (loadingOverlay) loadingOverlay.style.display = 'none'; startTimer(); } catch (e) { if (loadingOverlay) loadingOverlay.style.display = 'none'; displayMessage(`A critical error occurred: ${e.message}`, true); console.error(e); } }
 
